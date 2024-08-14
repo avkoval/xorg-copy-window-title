@@ -31,6 +31,7 @@
         ]
     filtered
     )
+  (str/replace "Konqueror - Програми KDE — Mozilla Firefox" #"— Mozilla Firefox.*" "")
   )
 
 
@@ -38,10 +39,15 @@
   (let [clipboard (process "xclip -selection clipboard")
         clipboard_in (io/writer (:in clipboard)) 
         title (:title (xwininfo (get-active-window)))
-        no_jira_title (str/replace title #" - Jira.*" "")
+        filtered_title (-> title
+                          (str/replace #" - Jira.*" "")
+                          (str/replace #" - Google.*" "")
+                          (str/replace #" - Konqueror.*" "")
+                          (str/replace #" — Mozilla Firefox.*" "")
+                          )
         ]
     (binding [*out* clipboard_in]
-      (println no_jira_title))
+      (print filtered_title))
     (.close clipboard_in)
     )
   )
